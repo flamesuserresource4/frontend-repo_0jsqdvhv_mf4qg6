@@ -3,11 +3,17 @@
 > vite
 
 
-  VITE v5.4.20  ready in 336 ms
+  VITE v5.4.20  ready in 377 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://172.20.19.30:3000/
-6:16:05 PM [vite] ✨ new dependencies optimized: @splinetool/react-spline, framer-motion, lucide-react
-6:16:05 PM [vite] ✨ optimized dependencies changed. reloading
-The file does not exist at "/home/workspace/node_modules/.vite/deps/chunk-I4MZPW7S.js?v=35394813" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
-The file does not exist at "/home/workspace/node_modules/.vite/deps/chunk-XPR23Y44.js?v=35394813" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+6:20:33 PM [vite] warning: Duplicate "transition" attribute in JSX element
+175|        whileInView={{ opacity: 1, y: 0 }}
+176|        viewport={{ once: true, amount: 0.3 }}
+177|        transition={{ duration: 0.5, delay: idx * 0.05 }}
+   |        ^
+178|      >
+179|        <motion.div
+
+  Plugin: vite:esbuild
+  File: /home/workspace/src/App.jsx

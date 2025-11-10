@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Spline from '@splinetool/react-spline'
-import { motion } from 'framer-motion'
-import { Bot, Cpu, Sparkles, Zap, Github, Mail } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { Bot, Cpu, Sparkles, Zap, Github, Mail, Calendar, Users, Star, ChevronDown, ArrowUpRight, ArrowUp } from 'lucide-react'
 
 // Motion helpers
 const fadeUp = (delay = 0) => ({
@@ -17,6 +17,16 @@ const staggerContainer = {
   },
 }
 
+function ScrollProgressBar() {
+  const { scrollYProgress } = useScroll()
+  const width = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
+  return (
+    <motion.div className="fixed top-0 left-0 right-0 z-[60] h-1 bg-transparent" style={{ pointerEvents: 'none' }}>
+      <motion.div style={{ width }} className="h-full bg-gradient-to-r from-fuchsia-500 to-indigo-500" />
+    </motion.div>
+  )
+}
+
 function Navbar() {
   const [open, setOpen] = useState(false)
   return (
@@ -28,10 +38,13 @@ function Navbar() {
           </span>
           <span className="tracking-tight">RoboClub</span>
         </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm text-gray-300">
+        <nav className="hidden md:flex items-center gap-6 text-sm text-gray-300">
           <a href="#robots" className="hover:text-white transition-colors">Robots</a>
           <a href="#about" className="hover:text-white transition-colors">About</a>
           <a href="#events" className="hover:text-white transition-colors">Events</a>
+          <a href="#projects" className="hover:text-white transition-colors">Projects</a>
+          <a href="#team" className="hover:text-white transition-colors">Team</a>
+          <a href="#contact" className="hover:text-white transition-colors">Contact</a>
           <a href="#join" className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 transition-colors border border-white/10">
             <Sparkles size={16} /> Join</a>
         </nav>
@@ -41,12 +54,19 @@ function Navbar() {
         </button>
       </div>
       {open && (
-        <div className="md:hidden border-t border-white/10 bg-gray-950/80 backdrop-blur-xl">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-3 text-sm text-gray-200">
-            <a href="#robots" className="hover:text-white">Robots</a>
-            <a href="#about" className="hover:text-white">About</a>
-            <a href="#events" className="hover:text-white">Events</a>
-            <a href="#join" className="inline-flex w-fit items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 border border-white/10">
+        <div className="md:hidden border-t border-white/10 bg-gray-950/90 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto px-4 py-4 grid grid-cols-2 gap-3 text-sm text-gray-200">
+            {[
+              ['Robots', '#robots'],
+              ['About', '#about'],
+              ['Events', '#events'],
+              ['Projects', '#projects'],
+              ['Team', '#team'],
+              ['Contact', '#contact'],
+            ].map(([label, href]) => (
+              <a key={label} href={href} className="hover:text-white">{label}</a>
+            ))}
+            <a href="#join" className="col-span-2 inline-flex w-full items-center justify-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 border border-white/10">
               <Sparkles size={16} /> Join</a>
           </div>
         </div>
@@ -109,32 +129,15 @@ function Hero() {
 }
 
 const robots = [
-  {
-    name: 'Astra-01',
-    role: 'Vision-guided line follower',
-    img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1887&auto=format&fit=crop',
-  },
-  {
-    name: 'Bolt-MX',
-    role: 'Omniwheel arena bot',
-    img: 'https://images.unsplash.com/photo-1581091215367-59ab6b66d24c?q=80&w=1887&auto=format&fit=crop',
-  },
-  {
-    name: 'Echo-Sense',
-    role: 'Obstacle mapper with LIDAR',
-    img: 'https://images.unsplash.com/photo-1581091215367-5f9f0b6b047f?q=80&w=1887&auto=format&fit=crop',
-  },
-  {
-    name: 'Nova-Arm',
-    role: '6‑DOF robotic arm',
-    img: 'https://images.unsplash.com/photo-1581093588401-16a4723f1f36?q=80&w=1887&auto=format&fit=crop',
-  },
+  { name: 'Astra-01', role: 'Vision-guided line follower', img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1887&auto=format&fit=crop' },
+  { name: 'Bolt-MX', role: 'Omniwheel arena bot', img: 'https://images.unsplash.com/photo-1581091215367-59ab6b66d24c?q=80&w=1887&auto=format&fit=crop' },
+  { name: 'Echo-Sense', role: 'Obstacle mapper with LIDAR', img: 'https://images.unsplash.com/photo-1581091215367-5f9f0b6b047f?q=80&w=1887&auto=format&fit=crop' },
+  { name: 'Nova-Arm', role: '6‑DOF robotic arm', img: 'https://images.unsplash.com/photo-1581093588401-16a4723f1f36?q=80&w=1887&auto=format&fit=crop' },
 ]
 
 function RobotsGrid() {
   return (
     <section id="robots" className="relative py-24 bg-gradient-to-b from-black to-gray-950">
-      {/* Section header with subtle slide-in */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -151,7 +154,6 @@ function RobotsGrid() {
         </a>
       </motion.div>
 
-      {/* Grid with different interaction: 3D tilt + neon glow on hover */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {robots.map((r, i) => (
@@ -221,7 +223,6 @@ function TiltCard({ robot, idx }) {
 }
 
 function About() {
-  // Different interaction: cards scale slightly with a rubber band effect + scroll-in from right
   const features = [
     { icon: <Cpu className="text-fuchsia-300" size={20} />, title: 'Build & Learn', desc: 'From soldering to SLAM — learn end to end.' },
     { icon: <Zap className="text-indigo-300" size={20} />, title: 'Compete', desc: 'Join national and international contests.' },
@@ -263,6 +264,243 @@ function About() {
   )
 }
 
+function Events() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
+
+  const items = [
+    { date: 'Apr 12', title: 'Intro to Robotics', desc: 'Hands-on basics: sensors, motors, controllers.' },
+    { date: 'May 03', title: 'AI Vision Lab', desc: 'Computer vision pipelines for line following.' },
+    { date: 'Jun 18', title: 'Battle Bot Night', desc: 'Arena practice + safety briefing.' },
+    { date: 'Jul 07', title: 'Hackathon', desc: '24h rapid prototyping sprint.' },
+  ]
+
+  return (
+    <section id="events" className="relative py-24 bg-gradient-to-b from-black to-gray-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-3 mb-10">
+          <Calendar className="text-fuchsia-400" size={20} />
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">Upcoming Events</h2>
+        </div>
+        <div ref={ref} className="relative grid lg:grid-cols-[1fr_2px_1fr] gap-6">
+          <motion.div style={{ y }} className="space-y-6">
+            {items.filter((_, i) => i % 2 === 0).map((e, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl p-5 bg-white/5 border border-white/10">
+                <div className="text-xs text-fuchsia-300">{e.date}</div>
+                <div className="text-white font-semibold">{e.title}</div>
+                <div className="text-gray-300 text-sm">{e.desc}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+          <div className="hidden lg:block w-px bg-gradient-to-b from-fuchsia-500/40 via-white/10 to-indigo-500/40" />
+          <motion.div style={{ y }} className="space-y-6">
+            {items.filter((_, i) => i % 2 === 1).map((e, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl p-5 bg-white/5 border border-white/10">
+                <div className="text-xs text-indigo-300">{e.date}</div>
+                <div className="text-white font-semibold">{e.title}</div>
+                <div className="text-gray-300 text-sm">{e.desc}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Projects() {
+  const projects = [
+    { title: 'Maze Solver', img: 'https://images.unsplash.com/photo-1543946602-a0fce8117694?q=80&w=1887&auto=format&fit=crop' },
+    { title: 'Quadruped Gait', img: 'https://images.unsplash.com/photo-1606229365485-93a3b8c5f5c5?q=80&w=1887&auto=format&fit=crop' },
+    { title: 'Drone Swarm', img: 'https://images.unsplash.com/photo-1527973833563-94f0d51a2f61?q=80&w=1887&auto=format&fit=crop' },
+    { title: 'Robotic Arm', img: 'https://images.unsplash.com/photo-1581091870622-7e0cdfbb6790?q=80&w=1887&auto=format&fit=crop' },
+    { title: 'Self-Balancing Bot', img: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1887&auto=format&fit=crop' },
+  ]
+
+  return (
+    <section id="projects" className="relative py-24 bg-gradient-to-b from-gray-950 to-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-3 mb-6">
+          <Star className="text-indigo-400" size={20} />
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">Projects</h2>
+        </div>
+        <p className="text-gray-300 mb-6">Swipe/scroll horizontally to explore. Each card lifts on hover.</p>
+        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="grid auto-cols-[80%] sm:auto-cols-[40%] md:auto-cols-[30%] grid-flow-col gap-6 snap-x snap-mandatory">
+            {projects.map((p, i) => (
+              <motion.div
+                key={i}
+                className="snap-start rounded-2xl overflow-hidden border border-white/10 bg-white/5 min-h-[320px] relative"
+                whileHover={{ y: -6 }}
+                transition={{ type: 'spring', stiffness: 250, damping: 20 }}
+              >
+                <img src={p.img} alt={p.title} className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <div className="text-sm opacity-90">{p.title}</div>
+                  <button className="mt-2 inline-flex items-center gap-2 text-xs bg-white/10 px-3 py-1.5 rounded-full border border-white/10 hover:bg-white/20">
+                    View <ArrowUpRight size={14} />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Team() {
+  const people = [
+    { name: 'Rhea', role: 'Lead Engineer', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1887&auto=format&fit=crop' },
+    { name: 'Sabhis', role: 'AI Research', img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=1887&auto=format&fit=crop' },
+    { name: 'Arjun', role: 'Mechanical', img: 'https://images.unsplash.com/photo-1527980965255-3cfa2a3b1ad4?q=80&w=1887&auto=format&fit=crop' },
+    { name: 'Maya', role: 'Electronics', img: 'https://images.unsplash.com/photo-1541534401786-2077eed87a72?q=80&w=1887&auto=format&fit=crop' },
+  ]
+  return (
+    <section id="team" className="relative py-24 bg-gradient-to-b from-black to-gray-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-3 mb-10">
+          <Users className="text-cyan-300" size={20} />
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">Team</h2>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {people.map((p, i) => (
+            <motion.div
+              key={i}
+              className="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
+              whileHover={{ rotate: [0, -1.5, 1.2, 0], scale: 1.02 }}
+            >
+              <img src={p.img} alt={p.name} className="h-64 w-full object-cover opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 text-white">
+                <div className="font-semibold">{p.name}</div>
+                <div className="text-sm text-gray-200">{p.role}</div>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <a href="#" className="px-3 py-1.5 text-xs rounded-full bg-white/10 border border-white/10 hover:bg-white/20">Portfolio</a>
+                <a href="#" className="px-3 py-1.5 text-xs rounded-full bg-white/10 border border-white/10 hover:bg-white/20">Contact</a>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function FAQ() {
+  const [open, setOpen] = useState(null)
+  const q = [
+    { q: 'Do I need experience?', a: 'No. Beginners are welcome — we help you get started fast.' },
+    { q: 'What do I bring?', a: 'Just your curiosity. Laptops provided for sessions when needed.' },
+    { q: 'How often do you meet?', a: 'Weekly workshops and monthly project sprints.' },
+  ]
+  return (
+    <section id="faq" className="py-24 bg-gradient-to-b from-gray-950 to-black">
+      <div className="max-w-3xl mx-auto px-4">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-8">FAQ</h2>
+        <div className="divide-y divide-white/10">
+          {q.map((item, i) => (
+            <div key={i} className="py-4">
+              <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between text-left text-white">
+                <span className="font-medium">{item.q}</span>
+                <motion.span animate={{ rotate: open === i ? 180 : 0 }}>
+                  <ChevronDown />
+                </motion.span>
+              </button>
+              <motion.div initial={false} animate={{ height: open === i ? 'auto' : 0, opacity: open === i ? 1 : 0 }} className="overflow-hidden text-gray-300">
+                <div className="pt-2 text-sm">{item.a}</div>
+              </motion.div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function SponsorsMarquee() {
+  const logos = ['NVIDIA', 'ROBOTIS', 'Arduino', 'TensorFlow', 'OpenCV', 'Raspberry Pi']
+  return (
+    <section className="py-16 bg-black/80 border-y border-white/10">
+      <div className="max-w-7xl mx-auto px-4">
+        <p className="text-center text-sm text-gray-400 mb-6">Supported by</p>
+        <div className="relative overflow-hidden">
+          <motion.div
+            className="flex gap-10 text-white/80 whitespace-nowrap"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ duration: 18, ease: 'linear', repeat: Infinity }}
+          >
+            {[...logos, ...logos].map((l, i) => (
+              <span key={i} className="text-sm px-4 py-2 rounded-full bg-white/5 border border-white/10">{l}</span>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Contact() {
+  return (
+    <section id="contact" className="py-24 bg-gradient-to-b from-black to-gray-950">
+      <div className="max-w-5xl mx-auto px-4 grid lg:grid-cols-2 gap-10 items-start">
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">Contact us</h2>
+          <p className="text-gray-300 mt-2">Have questions or want to collaborate? Send us a message.</p>
+          <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-5">
+            <div className="text-white font-semibold">Lab Hours</div>
+            <div className="text-gray-300 text-sm">Fri 5–8 PM, Sun 2–6 PM</div>
+            <div className="mt-3 text-gray-300 text-sm">Address: Robotics Lab, Tech Block, Campus</div>
+          </div>
+        </div>
+        <form className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <FloatingInput label="Name" type="text" />
+            <FloatingInput label="Email" type="email" />
+          </div>
+          <div className="mt-4">
+            <FloatingInput label="Subject" type="text" />
+          </div>
+          <div className="mt-4">
+            <FloatingTextarea label="Message" />
+          </div>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white px-5 py-3 rounded-xl hover:brightness-110">
+            Send <ArrowUpRight size={18} />
+          </motion.button>
+        </form>
+      </div>
+    </section>
+  )
+}
+
+function FloatingInput({ label, type }) {
+  const [v, setV] = useState('')
+  return (
+    <label className="relative block">
+      <input value={v} onChange={e => setV(e.target.value)} type={type} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-fuchsia-500/40" placeholder={label} />
+      <span className={`pointer-events-none absolute left-4 top-2 text-xs transition-all ${v ? 'text-white' : 'text-gray-400'}`}>{label}</span>
+    </label>
+  )
+}
+
+function FloatingTextarea({ label }) {
+  const [v, setV] = useState('')
+  return (
+    <label className="relative block">
+      <textarea value={v} onChange={e => setV(e.target.value)} rows={5} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-fuchsia-500/40" placeholder={label} />
+      <span className={`pointer-events-none absolute left-4 top-2 text-xs transition-all ${v ? 'text-white' : 'text-gray-400'}`}>{label}</span>
+    </label>
+  )
+}
+
 function Footer() {
   return (
     <footer className="py-10 border-t border-white/10 bg-gray-950">
@@ -277,15 +515,38 @@ function Footer() {
   )
 }
 
+function BackToTop() {
+  const { scrollY } = useScroll()
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    return scrollY.on('change', (v) => setShow(v > 600))
+  }, [scrollY])
+  return (
+    <motion.button
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white/10 border border-white/10 text-white backdrop-blur hover:bg-white/20"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: show ? 1 : 0, scale: show ? 1 : 0.8 }}
+      transition={{ duration: 0.2 }}
+    >
+      <ArrowUp />
+    </motion.button>
+  )
+}
+
 function App() {
-  // Page-level dark theme + subtle starfield overlay
   return (
     <div className="min-h-screen bg-black text-gray-100 relative">
+      <ScrollProgressBar />
       <Navbar />
       <Hero />
       <RobotsGrid />
       <About />
-      {/* Different interaction: magnetic CTA with pulse on hover */}
+      <Events />
+      <Projects />
+      <Team />
+      <FAQ />
+      <SponsorsMarquee />
       <section id="join" className="py-20 bg-gradient-to-b from-black to-gray-950">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -297,7 +558,7 @@ function App() {
           <h3 className="text-2xl sm:text-3xl font-bold text-white">Ready to build interactive robots?</h3>
           <p className="text-gray-300 mt-2">Come by our next open lab night — beginners welcome!</p>
           <motion.a
-            href="#"
+            href="#contact"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.98 }}
             className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white px-6 py-3 rounded-full hover:brightness-110 shadow-[0_0_40px_-16px] shadow-fuchsia-500/60"
@@ -306,7 +567,9 @@ function App() {
           </motion.a>
         </motion.div>
       </section>
+      <Contact />
       <Footer />
+      <BackToTop />
     </div>
   )
 }

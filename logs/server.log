@@ -3,17 +3,17 @@
 > vite
 
 
-  VITE v5.4.20  ready in 377 ms
+  VITE v5.4.20  ready in 385 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://172.20.19.30:3000/
-6:20:33 PM [vite] warning: Duplicate "transition" attribute in JSX element
-175|        whileInView={{ opacity: 1, y: 0 }}
-176|        viewport={{ once: true, amount: 0.3 }}
-177|        transition={{ duration: 0.5, delay: idx * 0.05 }}
+6:26:05 PM [vite] warning: Duplicate "transition" attribute in JSX element
+177|        whileInView={{ opacity: 1, y: 0 }}
+178|        viewport={{ once: true, amount: 0.3 }}
+179|        transition={{ duration: 0.5, delay: idx * 0.05 }}
    |        ^
-178|      >
-179|        <motion.div
+180|      >
+181|        <motion.div
 
   Plugin: vite:esbuild
   File: /home/workspace/src/App.jsx

@@ -7,13 +7,13 @@
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://172.20.19.30:3000/
-6:26:05 PM [vite] warning: Duplicate "transition" attribute in JSX element
-177|        whileInView={{ opacity: 1, y: 0 }}
-178|        viewport={{ once: true, amount: 0.3 }}
-179|        transition={{ duration: 0.5, delay: idx * 0.05 }}
+6:34:44 PM [vite] warning: Duplicate "transition" attribute in JSX element
+242|        whileInView={{ opacity: 1, y: 0 }}
+243|        viewport={{ once: true, amount: 0.3 }}
+244|        transition={{ duration: 0.5, delay: idx * 0.05 }}
    |        ^
-180|      >
-181|        <motion.div
+245|      >
+246|        <motion.div
 
   Plugin: vite:esbuild
   File: /home/workspace/src/App.jsx

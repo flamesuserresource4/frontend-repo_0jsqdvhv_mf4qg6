@@ -3,7 +3,7 @@ import Spline from '@splinetool/react-spline'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Bot, Cpu, Sparkles, Zap, Github, Mail, Calendar, Users, Star, ChevronDown, ArrowUpRight, ArrowUp } from 'lucide-react'
 
-// Motion helpers
+// Motion helpers (unchanged API)
 const fadeUp = (delay = 0) => ({
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, delay } },
@@ -17,12 +17,75 @@ const staggerContainer = {
   },
 }
 
+// Reusable monochrome background interactions
+function BGRadial({ className = '' }) {
+  return (
+    <div className={`pointer-events-none absolute inset-0 ${className}`}>
+      <motion.div
+        className="absolute -top-32 -left-24 w-[40rem] h-[40rem] rounded-full bg-white/5 blur-[100px]"
+        animate={{ opacity: [0.25, 0.4, 0.25] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute -bottom-32 -right-24 w-[40rem] h-[40rem] rounded-full bg-white/5 blur-[100px]"
+        animate={{ opacity: [0.2, 0.35, 0.2] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+      />
+    </div>
+  )
+}
+
+function BGGrid({ className = '' }) {
+  return (
+    <motion.div
+      aria-hidden
+      className={`pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-screen ${className}`}
+      style={{
+        backgroundImage:
+          'linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)'
+      }}
+      animate={{ backgroundPosition: ['0px 0px', '20px 10px', '0px 0px'] }}
+      transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+    />
+  )
+}
+
+function BGStripes({ className = '' }) {
+  return (
+    <motion.div
+      aria-hidden
+      className={`pointer-events-none absolute inset-0 opacity-[0.06] ${className}`}
+      style={{
+        backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.4) 0px, rgba(255,255,255,0.4) 1px, transparent 1px, transparent 12px)'
+      }}
+      animate={{ backgroundPosition: ['0px 0px', '30px 0px'] }}
+      transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+    />
+  )
+}
+
+function BGNoise({ className = '' }) {
+  return (
+    <motion.div
+      aria-hidden
+      className={`pointer-events-none absolute inset-0 ${className}`}
+      style={{
+        backgroundImage: 'url("data:image/svg+xml;utf8,<?xml version=\'1.0\' standalone=\'no\'?><svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'><filter id=\'n\'><feTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/><feColorMatrix type=\'saturate\' values=\'0\'/><feComponentTransfer><feFuncA type=\'table\' tableValues=\'0 0.06\'/></feComponentTransfer></filter><rect width=\'100%\' height=\'100%\' filter=\'url(#n)\'/></svg>")',
+        backgroundSize: '200px 200px',
+        opacity: 0.25
+      }}
+      animate={{ opacity: [0.15, 0.22, 0.15] }}
+      transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+    />
+  )
+}
+
 function ScrollProgressBar() {
   const { scrollYProgress } = useScroll()
   const width = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
   return (
     <motion.div className="fixed top-0 left-0 right-0 z-[60] h-1 bg-transparent" style={{ pointerEvents: 'none' }}>
-      <motion.div style={{ width }} className="h-full bg-gradient-to-r from-fuchsia-500 to-indigo-500" />
+      <motion.div style={{ width }} className="h-full bg-white" />
     </motion.div>
   )
 }
@@ -30,10 +93,11 @@ function ScrollProgressBar() {
 function Navbar() {
   const [open, setOpen] = useState(false)
   return (
-    <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-gray-950/70 border-b border-white/10">
+    <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-black/70 border-b border-white/10">
+      <BGNoise />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="#" className="group flex items-center gap-2 font-semibold text-gray-100">
-          <span className="h-9 w-9 rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-500 grid place-items-center text-white ring-1 ring-white/20 shadow-[0_0_30px_-10px] shadow-fuchsia-500/40">
+          <span className="h-9 w-9 rounded-full bg-white/10 grid place-items-center text-white ring-1 ring-white/20">
             <Bot size={18} />
           </span>
           <span className="tracking-tight">RoboClub</span>
@@ -45,7 +109,7 @@ function Navbar() {
           <a href="#projects" className="hover:text-white transition-colors">Projects</a>
           <a href="#team" className="hover:text-white transition-colors">Team</a>
           <a href="#contact" className="hover:text-white transition-colors">Contact</a>
-          <a href="#join" className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 transition-colors border border-white/10">
+          <a href="#join" className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full hover:bg-white/90 transition-colors border border-white/10">
             <Sparkles size={16} /> Join</a>
         </nav>
         <button className="md:hidden p-2 text-gray-200" onClick={() => setOpen(!open)} aria-label="Toggle Menu">
@@ -54,7 +118,7 @@ function Navbar() {
         </button>
       </div>
       {open && (
-        <div className="md:hidden border-t border-white/10 bg-gray-950/90 backdrop-blur-xl">
+        <div className="md:hidden border-t border-white/10 bg-black/90 backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 py-4 grid grid-cols-2 gap-3 text-sm text-gray-200">
             {[
               ['Robots', '#robots'],
@@ -66,7 +130,7 @@ function Navbar() {
             ].map(([label, href]) => (
               <a key={label} href={href} className="hover:text-white">{label}</a>
             ))}
-            <a href="#join" className="col-span-2 inline-flex w-full items-center justify-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 border border-white/10">
+            <a href="#join" className="col-span-2 inline-flex w-full items-center justify-center gap-2 bg-white text-black px-4 py-2 rounded-full hover:bg-white/90 border border-white/10">
               <Sparkles size={16} /> Join</a>
           </div>
         </div>
@@ -77,12 +141,9 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section className="relative min-h-[92vh] pt-24 overflow-hidden bg-gradient-to-b from-gray-950 via-gray-950 to-black">
-      {/* Glow orbs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-40 -left-32 w-[42rem] h-[42rem] rounded-full bg-fuchsia-500/20 blur-[100px]" />
-        <div className="absolute -bottom-40 -right-32 w-[42rem] h-[42rem] rounded-full bg-indigo-500/20 blur-[100px]" />
-      </div>
+    <section className="relative min-h-[92vh] pt-24 overflow-hidden bg-black">
+      <BGRadial />
+      <BGGrid />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-center relative z-10">
         <motion.div variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} className="py-10">
@@ -99,17 +160,17 @@ function Hero() {
             Build, program, and compete with interactive robots. Explore cutting‑edge technology with a community of makers.
           </motion.p>
           <motion.div variants={fadeUp(0.2)} className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#join" className="inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white px-5 py-3 rounded-full hover:brightness-110 transition-all shadow-[0_0_30px_-10px] shadow-fuchsia-500/50">
+            <a href="#join" className="inline-flex items-center gap-2 bg-white text-black px-5 py-3 rounded-full hover:bg-white/90 transition-all shadow-[0_0_20px_-12px] shadow-white/50">
               <Sparkles size={18} /> Join the Club
             </a>
-            <a href="#robots" className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/15 text-gray-200 hover:bg-white/10 transition-colors">
+            <a href="#robots" className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/20 text-gray-200 hover:bg-white/10 transition-colors">
               <Cpu size={18} /> See Robots
             </a>
           </motion.div>
           <motion.div variants={fadeUp(0.25)} className="mt-10 grid grid-cols-3 gap-4 text-sm text-gray-300">
-            <div className="flex items-center gap-2"><Zap className="text-fuchsia-400" size={16}/> Weekly builds</div>
-            <div className="flex items-center gap-2"><Cpu className="text-indigo-400" size={16}/> AI workshops</div>
-            <div className="flex items-center gap-2"><Bot className="text-violet-300" size={16}/> Competition team</div>
+            <div className="flex items-center gap-2"><Zap size={16}/> Weekly builds</div>
+            <div className="flex items-center gap-2"><Cpu size={16}/> AI workshops</div>
+            <div className="flex items-center gap-2"><Bot size={16}/> Competition team</div>
           </motion.div>
         </motion.div>
 
@@ -120,7 +181,9 @@ function Hero() {
           transition={{ duration: 0.6 }}
           className="h-[520px] sm:h-[580px] lg:h-[640px] rounded-2xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40 overflow-hidden relative"
         >
-          <Spline scene="https://prod.spline.design/M4yE7MTeWshitQbr/scene.splinecode" style={{ width: '100%', height: '100%' }} />
+          <div className="absolute inset-0">
+            <Spline scene="https://prod.spline.design/M4yE7MTeWshitQbr/scene.splinecode" style={{ width: '100%', height: '100%', filter: 'grayscale(1) contrast(1.05)' }} />
+          </div>
           <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10" />
         </motion.div>
       </div>
@@ -137,7 +200,9 @@ const robots = [
 
 function RobotsGrid() {
   return (
-    <section id="robots" className="relative py-24 bg-gradient-to-b from-black to-gray-950">
+    <section id="robots" className="relative py-24 bg-black">
+      <BGGrid />
+      <BGStripes />
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -149,7 +214,7 @@ function RobotsGrid() {
           <h2 className="text-3xl sm:text-4xl font-bold text-white">Featured Robots</h2>
           <p className="text-gray-400 mt-2">Hover to tilt, tap to flip for quick specs.</p>
         </div>
-        <a href="#join" className="hidden sm:inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 transition-colors border border-white/10">
+        <a href="#join" className="hidden sm:inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full hover:bg-white/90 transition-colors border border-white/10">
           <Sparkles size={16} /> Join Builds
         </a>
       </motion.div>
@@ -188,22 +253,22 @@ function TiltCard({ robot, idx }) {
           <motion.img
             src={robot.img}
             alt={robot.name}
-            className="h-full w-full object-cover will-change-transform"
+            className="h-full w-full object-cover will-change-transform filter grayscale"
             initial={{ scale: 1.05 }}
             whileHover={{ scale: 1.12 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div className="absolute bottom-3 left-3 right-3 text-white">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-wider opacity-90"><Cpu className="text-fuchsia-300" size={14}/> RoboClub</div>
+            <div className="flex items-center gap-2 text-xs uppercase tracking-wider opacity-90"><Cpu size={14}/> RoboClub</div>
             <h3 className="text-lg font-semibold mt-1 drop-shadow">{robot.name}</h3>
             <p className="text-sm opacity-90">{robot.role}</p>
           </div>
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-fuchsia-500/20 to-indigo-500/20 blur-md" />
+            <div className="absolute -inset-1 rounded-xl bg-white/10 blur-md" />
           </div>
         </div>
-        <div className="absolute inset-0 bg-gray-950 p-4 flex flex-col justify-between" style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}>
+        <div className="absolute inset-0 bg-black p-4 flex flex-col justify-between" style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}>
           <div>
             <h4 className="text-lg font-semibold text-white">{robot.name}</h4>
             <p className="text-gray-400">Quick Specs</p>
@@ -213,7 +278,7 @@ function TiltCard({ robot, idx }) {
               <li>Custom PCB</li>
             </ul>
           </div>
-          <button className="self-start inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white px-3 py-2 rounded-full text-sm hover:brightness-110 shadow-[0_0_30px_-12px] shadow-fuchsia-500/60">
+          <button className="self-start inline-flex items-center gap-2 bg-white text-black px-3 py-2 rounded-full text-sm hover:bg-white/90">
             <Zap size={16}/> Learn More
           </button>
         </div>
@@ -224,13 +289,15 @@ function TiltCard({ robot, idx }) {
 
 function About() {
   const features = [
-    { icon: <Cpu className="text-fuchsia-300" size={20} />, title: 'Build & Learn', desc: 'From soldering to SLAM — learn end to end.' },
-    { icon: <Zap className="text-indigo-300" size={20} />, title: 'Compete', desc: 'Join national and international contests.' },
-    { icon: <Sparkles className="text-violet-300" size={20} />, title: 'Innovate', desc: 'Hackathons, research sprints, and demos.' },
-    { icon: <Bot className="text-cyan-300" size={20} />, title: 'Community', desc: 'Meet makers, share ideas, build together.' },
+    { icon: <Cpu size={20} />, title: 'Build & Learn', desc: 'From soldering to SLAM — learn end to end.' },
+    { icon: <Zap size={20} />, title: 'Compete', desc: 'Join national and international contests.' },
+    { icon: <Sparkles size={20} />, title: 'Innovate', desc: 'Hackathons, research sprints, and demos.' },
+    { icon: <Bot size={20} />, title: 'Community', desc: 'Meet makers, share ideas, build together.' },
   ]
   return (
-    <section id="about" className="py-24 bg-gradient-to-b from-gray-950 to-black">
+    <section id="about" className="relative py-24 bg-black">
+      <BGRadial />
+      <BGNoise />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-10 items-start">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
@@ -251,7 +318,7 @@ function About() {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.55, delay: i * 0.05 }}
               whileHover={{ scale: 1.03, rotate: [0, 0.4, 0] }}
-              className="rounded-xl border border-white/10 bg-white/5 p-5 shadow-sm hover:shadow-fuchsia-500/20 hover:shadow-xl"
+              className="rounded-xl border border-white/10 bg-white/5 p-5 shadow-sm hover:shadow-white/20 hover:shadow-xl"
             >
               <div className="h-10 w-10 rounded-lg bg-white/10 ring-1 ring-white/10 grid place-items-center mb-3">{f.icon}</div>
               <h3 className="font-semibold text-white">{f.title}</h3>
@@ -277,27 +344,29 @@ function Events() {
   ]
 
   return (
-    <section id="events" className="relative py-24 bg-gradient-to-b from-black to-gray-950">
+    <section id="events" className="relative py-24 bg-black">
+      <BGStripes />
+      <BGNoise />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3 mb-10">
-          <Calendar className="text-fuchsia-400" size={20} />
+          <Calendar size={20} />
           <h2 className="text-3xl sm:text-4xl font-bold text-white">Upcoming Events</h2>
         </div>
         <div ref={ref} className="relative grid lg:grid-cols-[1fr_2px_1fr] gap-6">
           <motion.div style={{ y }} className="space-y-6">
             {items.filter((_, i) => i % 2 === 0).map((e, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl p-5 bg-white/5 border border-white/10">
-                <div className="text-xs text-fuchsia-300">{e.date}</div>
+                <div className="text-xs text-gray-300">{e.date}</div>
                 <div className="text-white font-semibold">{e.title}</div>
                 <div className="text-gray-300 text-sm">{e.desc}</div>
               </motion.div>
             ))}
           </motion.div>
-          <div className="hidden lg:block w-px bg-gradient-to-b from-fuchsia-500/40 via-white/10 to-indigo-500/40" />
+          <div className="hidden lg:block w-px bg-gradient-to-b from-white/40 via-white/10 to-white/40" />
           <motion.div style={{ y }} className="space-y-6">
             {items.filter((_, i) => i % 2 === 1).map((e, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl p-5 bg-white/5 border border-white/10">
-                <div className="text-xs text-indigo-300">{e.date}</div>
+                <div className="text-xs text-gray-300">{e.date}</div>
                 <div className="text-white font-semibold">{e.title}</div>
                 <div className="text-gray-300 text-sm">{e.desc}</div>
               </motion.div>
@@ -319,10 +388,12 @@ function Projects() {
   ]
 
   return (
-    <section id="projects" className="relative py-24 bg-gradient-to-b from-gray-950 to-black">
+    <section id="projects" className="relative py-24 bg-black">
+      <BGGrid />
+      <BGRadial />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3 mb-6">
-          <Star className="text-indigo-400" size={20} />
+          <Star size={20} />
           <h2 className="text-3xl sm:text-4xl font-bold text-white">Projects</h2>
         </div>
         <p className="text-gray-300 mb-6">Swipe/scroll horizontally to explore. Each card lifts on hover.</p>
@@ -335,7 +406,7 @@ function Projects() {
                 whileHover={{ y: -6 }}
                 transition={{ type: 'spring', stiffness: 250, damping: 20 }}
               >
-                <img src={p.img} alt={p.title} className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                <img src={p.img} alt={p.title} className="absolute inset-0 w-full h-full object-cover opacity-80 filter grayscale" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
                   <div className="text-sm opacity-90">{p.title}</div>
@@ -360,10 +431,12 @@ function Team() {
     { name: 'Maya', role: 'Electronics', img: 'https://images.unsplash.com/photo-1541534401786-2077eed87a72?q=80&w=1887&auto=format&fit=crop' },
   ]
   return (
-    <section id="team" className="relative py-24 bg-gradient-to-b from-black to-gray-950">
+    <section id="team" className="relative py-24 bg-black">
+      <BGNoise />
+      <BGStripes />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3 mb-10">
-          <Users className="text-cyan-300" size={20} />
+          <Users size={20} />
           <h2 className="text-3xl sm:text-4xl font-bold text-white">Team</h2>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -377,7 +450,7 @@ function Team() {
               transition={{ duration: 0.5, delay: i * 0.05 }}
               whileHover={{ rotate: [0, -1.5, 1.2, 0], scale: 1.02 }}
             >
-              <img src={p.img} alt={p.name} className="h-64 w-full object-cover opacity-80" />
+              <img src={p.img} alt={p.name} className="h-64 w-full object-cover opacity-80 filter grayscale" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3 text-white">
                 <div className="font-semibold">{p.name}</div>
@@ -403,7 +476,9 @@ function FAQ() {
     { q: 'How often do you meet?', a: 'Weekly workshops and monthly project sprints.' },
   ]
   return (
-    <section id="faq" className="py-24 bg-gradient-to-b from-gray-950 to-black">
+    <section id="faq" className="relative py-24 bg-black">
+      <BGGrid />
+      <BGNoise />
       <div className="max-w-3xl mx-auto px-4">
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-8">FAQ</h2>
         <div className="divide-y divide-white/10">
@@ -429,7 +504,8 @@ function FAQ() {
 function SponsorsMarquee() {
   const logos = ['NVIDIA', 'ROBOTIS', 'Arduino', 'TensorFlow', 'OpenCV', 'Raspberry Pi']
   return (
-    <section className="py-16 bg-black/80 border-y border-white/10">
+    <section className="relative py-16 bg-black border-y border-white/10">
+      <BGStripes />
       <div className="max-w-7xl mx-auto px-4">
         <p className="text-center text-sm text-gray-400 mb-6">Supported by</p>
         <div className="relative overflow-hidden">
@@ -450,7 +526,9 @@ function SponsorsMarquee() {
 
 function Contact() {
   return (
-    <section id="contact" className="py-24 bg-gradient-to-b from-black to-gray-950">
+    <section id="contact" className="relative py-24 bg-black">
+      <BGRadial />
+      <BGGrid />
       <div className="max-w-5xl mx-auto px-4 grid lg:grid-cols-2 gap-10 items-start">
         <div>
           <h2 className="text-3xl sm:text-4xl font-bold text-white">Contact us</h2>
@@ -472,7 +550,7 @@ function Contact() {
           <div className="mt-4">
             <FloatingTextarea label="Message" />
           </div>
-          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white px-5 py-3 rounded-xl hover:brightness-110">
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-white text-black px-5 py-3 rounded-xl hover:bg-white/90">
             Send <ArrowUpRight size={18} />
           </motion.button>
         </form>
@@ -485,7 +563,7 @@ function FloatingInput({ label, type }) {
   const [v, setV] = useState('')
   return (
     <label className="relative block">
-      <input value={v} onChange={e => setV(e.target.value)} type={type} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-fuchsia-500/40" placeholder={label} />
+      <input value={v} onChange={e => setV(e.target.value)} type={type} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-white/30" placeholder={label} />
       <span className={`pointer-events-none absolute left-4 top-2 text-xs transition-all ${v ? 'text-white' : 'text-gray-400'}`}>{label}</span>
     </label>
   )
@@ -495,7 +573,7 @@ function FloatingTextarea({ label }) {
   const [v, setV] = useState('')
   return (
     <label className="relative block">
-      <textarea value={v} onChange={e => setV(e.target.value)} rows={5} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-fuchsia-500/40" placeholder={label} />
+      <textarea value={v} onChange={e => setV(e.target.value)} rows={5} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-white/30" placeholder={label} />
       <span className={`pointer-events-none absolute left-4 top-2 text-xs transition-all ${v ? 'text-white' : 'text-gray-400'}`}>{label}</span>
     </label>
   )
@@ -503,7 +581,8 @@ function FloatingTextarea({ label }) {
 
 function Footer() {
   return (
-    <footer className="py-10 border-t border-white/10 bg-gray-950">
+    <footer className="relative py-10 border-t border-white/10 bg-black">
+      <BGNoise />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-sm text-gray-400">© {new Date().getFullYear()} RoboClub. All rights reserved.</p>
         <div className="flex items-center gap-3 text-sm">
@@ -524,7 +603,7 @@ function BackToTop() {
   return (
     <motion.button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white/10 border border-white/10 text-white backdrop-blur hover:bg-white/20"
+      className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white text-black border border-white/10 backdrop-blur hover:bg-white/90"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: show ? 1 : 0, scale: show ? 1 : 0.8 }}
       transition={{ duration: 0.2 }}
@@ -547,7 +626,9 @@ function App() {
       <Team />
       <FAQ />
       <SponsorsMarquee />
-      <section id="join" className="py-20 bg-gradient-to-b from-black to-gray-950">
+      <section id="join" className="relative py-20 bg-black">
+        <BGGrid />
+        <BGRadial />
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -561,7 +642,7 @@ function App() {
             href="#contact"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.98 }}
-            className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white px-6 py-3 rounded-full hover:brightness-110 shadow-[0_0_40px_-16px] shadow-fuchsia-500/60"
+            className="mt-6 inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full hover:bg-white/90 shadow-[0_0_30px_-16px] shadow-white/50"
           >
             <Sparkles size={18}/> I want in
           </motion.a>
